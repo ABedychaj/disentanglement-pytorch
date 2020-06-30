@@ -14,6 +14,9 @@ python3 main.py \
 --traverse_z=true \
 --encoder=SimpleGaussianConv64 \
 --decoder=SimpleConv64 \
+--batch_size 128 \
+--max_iter 5000 \
+--max_epoch 100 \
 --z_dim=8 \
 --w_kld=1 \
 --use_wandb=false

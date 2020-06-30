@@ -11,9 +11,10 @@ python3 main.py \
 --alg=AE \
 --dset_dir=$DISENTANGLEMENT_LIB_DATA \
 --dset_name=celebA \
---encoder=SimpleConv64 \
---decoder=SimpleConv64 \
---z_dim=32 \
+--encoder=ShallowLinear \
+--decoder=ShallowLinear \
+--batch_size 32 \
+--z_dim=128 \
 --use_wandb=false \
 
 

@@ -39,8 +39,8 @@ TEST_DATASETS = DATASETS[0:2]  # celebA, dsprites_full
 DISCRIMINATORS = ('SimpleDiscriminator', 'SimpleDiscriminatorConv64')
 TILERS = ('MultiTo2DChannel',)
 DECODERS = ('SimpleConv64', 'ShallowLinear', 'DeepLinear')
-ENCODERS = ('SimpleConv64', 'SimpleGaussianConv64', 'PadlessConv64', 'PadlessGaussianConv64',
-            'ShallowGaussianLinear', 'DeepGaussianLinear')
+ENCODERS = ('SimpleConv64', 'SimpleGaussianConv64', 'ShallowLinear', 'PadlessConv64', 'PadlessGaussianConv64',
+            'ShallowGaussianLinear', 'DeepGaussianLinear', 'DeepLinear')
 
 # Evaluation Metrics
 EVALUATION_METRICS = ('dci', 'factor_vae_metric', 'sap_score', 'mig', 'irs', 'beta_vae_sklearn')
@@ -48,4 +48,4 @@ EVALUATION_METRICS = ('dci', 'factor_vae_metric', 'sap_score', 'mig', 'irs', 'be
 # Schedulers
 LR_SCHEDULERS = ('ReduceLROnPlateau', 'StepLR', 'MultiStepLR', 'ExponentialLR',
                  'CosineAnnealingLR', 'CyclicLR', 'LambdaLR')
-SCHEDULERS = ('LinearScheduler', )
+SCHEDULERS = ('LinearScheduler',)

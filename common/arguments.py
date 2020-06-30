@@ -43,9 +43,9 @@ def get_args(sys_args):
     parser.add_argument('--test', default=False, type=str2bool, help='to test')
 
     # training hyper-params
-    parser.add_argument('--max_iter', default=3e7, type=float, help='maximum training iteration')
-    parser.add_argument('--max_epoch', default=3e7, type=float, help='maximum training epochs')
-    parser.add_argument('--batch_size', default=64, type=int, help='batch size')
+    parser.add_argument('--max_iter', default=10000, type=float, help='maximum training iteration')
+    parser.add_argument('--max_epoch', default=5000, type=float, help='maximum training epochs')
+    parser.add_argument('--batch_size', default=42, type=int, help='batch size')
     parser.add_argument('--num_disc_layers', default=5, type=int, help='number of fc layers in discriminators')
     parser.add_argument('--size_disc_layers', default=1000, type=int, help='size of fc layers in discriminators')
 

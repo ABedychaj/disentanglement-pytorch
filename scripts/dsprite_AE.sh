@@ -11,10 +11,13 @@ python3 main.py \
 --alg=AE \
 --dset_dir=$DISENTANGLEMENT_LIB_DATA  \
 --dset_name=dsprites_full \
---encoder=SimpleConv64 \
---decoder=SimpleConv64 \
---z_dim=8 \
---w_recon=10000 \
+--traverse_z=true \
+--encoder=DeepLinear \
+--decoder=DeepLinear \
+--max_iter 5000 \
+--max_epoch 20000 \
+--z_dim=32 \
+--batch_size=64 \
 --use_wandb=false \
 
 

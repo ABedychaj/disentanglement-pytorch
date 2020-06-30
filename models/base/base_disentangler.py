@@ -356,7 +356,7 @@ class BaseDisentangler(object):
                     file_name = \
                         os.path.join(self.train_output_dir, '{}_{}_{}.{}'.format(c.TEMP, key, str(j).zfill(2), c.JPG))
                     torchvision.utils.save_image(tensor=gifs[i][j].cpu(),
-                                                 filename=file_name,
+                                                 fp=file_name,
                                                  nrow=total_rows, pad_value=1)
                 if test:
                     file_name = os.path.join(self.test_output_dir, '{}_{}_{}.{}'.format(c.GIF, self.iter, key, c.GIF))
