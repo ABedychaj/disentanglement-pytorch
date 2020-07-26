@@ -134,7 +134,7 @@ class AE(BaseDisentangler):
         self.net_mode(train=False)
         for x_true1, _ in self.data_loader:
             x_true1 = x_true1.to(self.device)
-            x_recon = self.model(x_true1)
+            x_recon, z_latent = self.model(x_true1)
 
             self.visualize_recon(x_true1, x_recon, test=True)
             self.visualize_traverse(limit=(self.traverse_min, self.traverse_max), spacing=self.traverse_spacing,

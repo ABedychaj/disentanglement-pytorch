@@ -1,12 +1,13 @@
-import sys
-import torch
 import logging
 import os
+import sys
 
-from common.utils import setup_logging, initialize_seeds, set_environment_variables
+import torch
+
+import models
 from aicrowd.aicrowd_utils import is_on_aicrowd_server
 from common.arguments import get_args
-import models
+from common.utils import setup_logging, initialize_seeds, set_environment_variables
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
@@ -30,7 +31,7 @@ def main(_args):
 
     # load checkpoint
     if _args.ckpt_load:
-        model.load_checkpoint(_args.ckpt_load, load_iternum=_args.ckpt_load_iternum, load_optim=_args.ckpt_load_optim)
+        model.load_checkpoint(_args.ckpt_dir + "/" + _args.ckpt_load, load_iternum=_args.ckpt_load_iternum, load_optim=_args.ckpt_load_optim)
 
     # run test or train
     if not _args.test:
