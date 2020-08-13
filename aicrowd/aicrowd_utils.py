@@ -57,7 +57,7 @@ def evaluate_disentanglement_metric(model, metric_names=['mig'], dataset_name='m
         for key, value in results_dict.items():
             if key != 'elapsed_time' and key != 'uuid' and key != 'num_active_dims':
                 results = value
-        logging.info('Evaluation   {}={}'.format(metric_name, results))
-        results_dict_all['eval_{}'.format(metric_name)] = results
+                logging.info('Evaluation   {}={}'.format(key, results))
+            results_dict_all['eval_{}'.format(metric_name)] = results
     # print(results_dict)
     return results_dict_all

@@ -31,7 +31,7 @@ from disentanglement_lib.evaluation.metrics import mig  # pylint: disable=unused
 from disentanglement_lib.evaluation.metrics import modularity_explicitness  # pylint: disable=unused-import
 from disentanglement_lib.evaluation.metrics import reduced_downstream_task  # pylint: disable=unused-import
 from disentanglement_lib.evaluation.metrics import sap_score  # pylint: disable=unused-import
-from disentanglement_lib.evaluation.metrics import unsupervised_metrics  # pylint: disable=unused-import
+from aicrowd.metrics import unsupervised_metrics  # pylint: disable=unused-import
 from disentanglement_lib.utils import results
 import numpy as np
 import tensorflow as tf
@@ -44,7 +44,7 @@ from tensorflow.python.framework.errors_impl import NotFoundError
 # Some more redundant code, but this allows us to not import utils_pytorch
 def get_dataset_name():
     """Reads the name of the dataset from the environment variable `AICROWD_DATASET_NAME`."""
-    return os.getenv("AICROWD_DATASET_NAME", "cars3d")
+    return "dummy_data"
 
 
 def evaluate_with_gin(model_dir,
@@ -191,7 +191,7 @@ def _evaluate_with_pytorch(module_path, evalulation_fn, dataset, random_seed):
 
 
 def _evaluate_with_numpy(module_path, evalulation_fn, dataset, random_seed):
-    import utils_numpy
+    from aicrowd import utils_numpy
     # Load function and make a representor
     fn = utils_numpy.import_function(path=module_path)
     _representation_function = utils_numpy.make_representor(fn)

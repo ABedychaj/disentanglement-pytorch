@@ -11,11 +11,13 @@ python3 main.py \
 --alg=AE \
 --dset_dir=$DISENTANGLEMENT_LIB_DATA \
 --dset_name=celebA \
---encoder=ShallowLinear \
---decoder=ShallowLinear \
---batch_size 32 \
---z_dim=128 \
+--traverse_z=true \
+--encoder=SimpleConv64 \
+--decoder=SimpleConv64 \
+--batch_size 128 \
+--max_iter 100000 \
+--max_epoch 1000 \
+--z_dim=6 \
+--batch_size=32 \
 --use_wandb=false \
-
-
-
+--evaluation_metric unsupervised \
