@@ -57,7 +57,7 @@ def unsupervised_metrics(ground_truth_data,
     assert num_codes == cov_mus.shape[0]
 
     # Weighted ICA measure
-    scores["weighted_ica_measure"] = wica_loss(cov_mus, num_codes, latent_normalization=True).item()
+    scores["weighted_ica_measure"] = wica_loss(mus_train.T, num_codes, latent_normalization=True).item()
 
     # Gaussian total correlation.
     scores["gaussian_total_correlation"] = gaussian_total_correlation(cov_mus)

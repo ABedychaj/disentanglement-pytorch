@@ -32,6 +32,7 @@ from disentanglement_lib.evaluation.metrics import modularity_explicitness  # py
 from disentanglement_lib.evaluation.metrics import reduced_downstream_task  # pylint: disable=unused-import
 from disentanglement_lib.evaluation.metrics import sap_score  # pylint: disable=unused-import
 from aicrowd.metrics import unsupervised_metrics  # pylint: disable=unused-import
+from aicrowd.metrics import max_corr  # pylint: disable=unused-import
 from disentanglement_lib.utils import results
 import numpy as np
 import tensorflow as tf

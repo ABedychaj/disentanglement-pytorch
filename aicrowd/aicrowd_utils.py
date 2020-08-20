@@ -27,6 +27,8 @@ def evaluate_disentanglement_metric(model, metric_names=['mig'], dataset_name='m
     _study = unsupervised_study_v1.UnsupervisedStudyV1()
     evaluation_configs = sorted(_study.get_eval_config_files())
     evaluation_configs.append(os.path.join(os.getenv("PWD", ""), "extra_metrics_configs/irs.gin"))
+    evaluation_configs.append(os.path.join(os.getenv("PWD", ""), "extra_metrics_configs/unsupervised.gin"))
+    evaluation_configs.append(os.path.join(os.getenv("PWD", ""), "extra_metrics_configs/max_corr.gin"))
 
     results_dict_all = dict()
     for metric_name in metric_names:

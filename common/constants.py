@@ -43,7 +43,7 @@ ENCODERS = ('SimpleConv64', 'SimpleGaussianConv64', 'ShallowLinear', 'PadlessCon
             'ShallowGaussianLinear', 'DeepGaussianLinear', 'DeepLinear')
 
 # Evaluation Metrics
-EVALUATION_METRICS = ('dci', 'factor_vae_metric', 'sap_score', 'mig', 'irs', 'beta_vae_sklearn', 'unsupervised')
+EVALUATION_METRICS = ('dci', 'factor_vae_metric', 'sap_score', 'mig', 'irs', 'beta_vae_sklearn', 'unsupervised', 'max_corr')
 
 # Schedulers
 LR_SCHEDULERS = ('ReduceLROnPlateau', 'StepLR', 'MultiStepLR', 'ExponentialLR',
