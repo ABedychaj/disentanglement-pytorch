@@ -85,7 +85,7 @@ class AE(BaseDisentangler):
         scale = (1 / dim)
         sampled_points = self.random_choice_full(x, dim)
         number_of_gausses = 8
-        cov_mat = (scale * torch.eye(dim)).repeat(number_of_gausses, 1, 1).type(torch.float64)
+        cov_mat = (scale * torch.eye(dim)).repeat(number_of_gausses, 1, 1)
 
         mvn = MultivariateNormal(loc=sampled_points,
                                  covariance_matrix=cov_mat)
