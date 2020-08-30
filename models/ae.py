@@ -87,10 +87,9 @@ class AE(BaseDisentangler):
         number_of_gausses = 8
         cov_mat = (scale * torch.eye(dim)).repeat(number_of_gausses, 1, 1)
 
-        mvn = MultivariateNormal(loc=sampled_points,
-                                 covariance_matrix=cov_mat)
-        x = x.to(self.device)
-        weight_vector = torch.exp(mvn.log_prob(x.reshape(-1, 1, dim)))
+        mvn = MultivariateNormal(loc=sampled_points.to(self.device),
+                                 covariance_matrix=cov_mat.to(self.device))
+        weight_vector = torch.exp(mvn.log_prob(x.reshape(-1, 1, dim).to(self.device)))
 
         sum_of_weights = torch.sum(weight_vector, axis=0)
         weight_sum = torch.sum(x * weight_vector.T.reshape(number_of_gausses, -1, 1), axis=1)
