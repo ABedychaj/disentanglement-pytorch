@@ -89,7 +89,7 @@ class AE(BaseDisentangler):
 
         mvn = MultivariateNormal(loc=sampled_points,
                                  covariance_matrix=cov_mat)
-
+        x = x.to(self.device)
         weight_vector = torch.exp(mvn.log_prob(x.reshape(-1, 1, dim)))
 
         sum_of_weights = torch.sum(weight_vector, axis=0)
