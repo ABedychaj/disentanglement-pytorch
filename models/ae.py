@@ -1,3 +1,5 @@
+import random
+
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
@@ -114,8 +116,14 @@ class AE(BaseDisentangler):
             self.net_mode(train=True)
             for x_true1, _ in self.data_loader:
                 x_true1 = x_true1.to(self.device)
+
+                # dummy nested dropout
+                # with torch.no_grad():
+                #     t = random.randint(5, 32)
+                #     self.model.encoder.main[-1].weight[t:] = torch.zeros_like(self.model.encoder.main[-1].weight[t:])
+
                 x_recon, z_latent = self.model(x_true1)
-                w_loss = 100 * self.wica_loss(z_latent.data, latent_normalization=True)
+                w_loss = 10 * self.wica_loss(z_latent.data, latent_normalization=True).to(self.device)
                 recon_loss = self.loss_fn(x_recon=x_recon, x_true=x_true1) + w_loss
                 loss_dict = {'recon': recon_loss, 'wica_loss': w_loss}
 
