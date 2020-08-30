@@ -14,12 +14,12 @@ python3 main.py \
 --traverse_z=true \
 --encoder=SimpleConv64 \
 --decoder=SimpleConv64 \
---max_iter 50000 \
---max_epoch 500 \
---z_dim=32 \
+--max_iter 100000 \
+--max_epoch 1500 \
+--z_dim=8 \
 --batch_size=32 \
 --use_wandb=false \
---evaluation_metric max_corr \
+--evaluation_metric mig factor_vae_metric unsupervised \
 
 
 
