@@ -117,9 +117,9 @@ class AE(BaseDisentangler):
                 x_true1 = x_true1.to(self.device)
 
                 # dummy nested dropout
-                # with torch.no_grad():
-                #     t = random.randint(5, 32)
-                #     self.model.encoder.main[-1].weight[t:] = torch.zeros_like(self.model.encoder.main[-1].weight[t:])
+                with torch.no_grad():
+                    t = random.randint(5, 32)
+                    self.model.encoder.main[-1].weight[t:] = torch.zeros_like(self.model.encoder.main[-1].weight[t:])
 
                 x_recon, z_latent = self.model(x_true1)
                 w_loss = 10 * self.wica_loss(z_latent.data, latent_normalization=True).to(self.device)
