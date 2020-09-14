@@ -172,7 +172,7 @@ class VAE(BaseDisentangler):
                 label2 = label2.to(self.device)
 
                 losses, params = self.vae_base(losses, x_true1, x_true2, label1, label2)
-
+                losses = losses.copy()
                 self.optim_G.zero_grad()
                 losses[c.TOTAL_VAE].backward(retain_graph=False)
                 vae_loss_sum += losses[c.TOTAL_VAE]
