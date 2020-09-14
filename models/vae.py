@@ -159,6 +159,7 @@ class VAE(BaseDisentangler):
         return losses, {'x_recon': x_recon, 'mu': mu, 'z': z, 'logvar': logvar}
 
     def train(self):
+        torch.autograd.set_detect_anomaly(True)
         while not self.training_complete():
             self.net_mode(train=True)
             vae_loss_sum = 0
