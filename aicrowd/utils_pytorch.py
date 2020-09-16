@@ -101,7 +101,7 @@ def export_model(model, path=None, input_shape=(1, 3, 64, 64)):
         Path to where the model is saved.
     """
     path = get_model_path() if path is None else path
-    model = deepcopy(model).cuda().eval()
+    model = deepcopy(model).eval()
     if not isinstance(model, torch.jit.ScriptModule):
         assert input_shape is not None, "`input_shape` must be provided since model is not a " \
                                         "`ScriptModule`."
@@ -152,7 +152,7 @@ def make_representor(model, cuda=None):
     # https://github.com/pytorch/pytorch/issues/18106
     # model = deepcopy(model)
     cuda = use_cuda() if cuda is None else cuda
-    model = model.cuda() if cuda else model.cuda()
+    model = model.cuda() if cuda else model.cpu()
 
     # Define the representation function
     def _represent(x):
