@@ -180,7 +180,7 @@ class RepresentationExtractor(torch.nn.Module):
     def __init__(self, encoder, mode='mean'):
         super(RepresentationExtractor, self).__init__()
         assert mode in self.VALID_MODES, '`mode` must be one of {self.VALID_MODES}'
-        self.encoder = encoder
+        self.encoder = encoder.cuda()
         self.mode = mode
 
     def forward(self, x):
@@ -188,7 +188,7 @@ class RepresentationExtractor(torch.nn.Module):
             mu = self.encoder(x)
             return mu
         elif self.mode == 'sample':
-            mu, logvar = self.encoder(x).cuda()
+            mu, logvar = self.encoder(x)
             return self.reparameterize(mu, logvar)
         else:
             raise NotImplementedError
