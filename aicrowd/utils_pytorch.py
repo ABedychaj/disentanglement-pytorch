@@ -166,7 +166,7 @@ def make_representor(model, cuda=None):
         x = torch.from_numpy(x).float().to('cuda' if cuda else 'cpu')
         with torch.no_grad():
             y = model(x)
-        y = y.cuda().numpy()
+        y = y.cuda()
         assert y.ndim == 2, \
             "The returned output from the representor must be two dimensional (NC)."
         return y
