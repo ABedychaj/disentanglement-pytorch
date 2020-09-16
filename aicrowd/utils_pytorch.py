@@ -184,7 +184,7 @@ class RepresentationExtractor(torch.nn.Module):
         self.mode = mode
 
     def forward(self, x):
-        mu, logvar = self.encoder(x)
+        mu, logvar = self.encoder(x.cuda())
         if self.mode == 'mean':
             return mu
         elif self.mode == 'sample':
