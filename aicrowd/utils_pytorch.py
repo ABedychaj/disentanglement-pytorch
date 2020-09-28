@@ -2,27 +2,21 @@
 Borrowed from https://github.com/AIcrowd/neurips2019_disentanglement_challenge_starter_kit/blob/master/utils_pytorch.py
 """
 
-from copy import deepcopy
+import os
 from collections import namedtuple
+from copy import deepcopy
 
 import numpy as np
 import torch
 from torch.jit import trace
 
 # ------ Data Loading ------
-from torch.utils.data.dataset import Dataset
-from torch.utils.data.dataloader import DataLoader
-
-import os
 if 'DISENTANGLEMENT_LIB_DATA' not in os.environ:
     os.environ.update({'DISENTANGLEMENT_LIB_DATA': os.path.join(os.path.dirname(__file__),
                                                                 'scratch',
                                                                 'dataset')})
 # noinspection PyUnresolvedReferences
 from disentanglement_lib.data.ground_truth.named_data import get_named_ground_truth_data
-
-from common.data_loader import get_dataset_name
-
 
 ExperimentConfig = namedtuple('ExperimentConfig',
                               ('base_path', 'experiment_name', 'dataset_name'))
@@ -184,10 +178,11 @@ class RepresentationExtractor(torch.nn.Module):
         self.mode = mode
 
     def forward(self, x):
-        mu, logvar = self.encoder(x.cuda())
         if self.mode == 'mean':
+            mu = self.encoder(x.cuda())
             return mu
         elif self.mode == 'sample':
+            mu, logvar = self.encoder(x.cuda())
             return self.reparameterize(mu, logvar)
         else:
             raise NotImplementedError
