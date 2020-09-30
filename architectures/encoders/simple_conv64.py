@@ -21,8 +21,6 @@ class SimpleConv64(BaseImageEncoder):
             nn.ReLU(True),
             nn.Conv2d(128, 256, 4, 2, 1),
             nn.ReLU(True),
-            nn.Conv2d(256, 256, 4, 2, 1),
-            nn.ReLU(True),
             Flatten3D(),
             nn.Linear(256, latent_dim, bias=True)
         )
