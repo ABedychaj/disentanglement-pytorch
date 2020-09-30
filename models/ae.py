@@ -55,6 +55,9 @@ class AE(BaseDisentangler):
         self.setup_schedulers(args.lr_scheduler, args.lr_scheduler_args,
                               args.w_recon_scheduler, args.w_recon_scheduler_args)
 
+        # lambda
+        self.lambda_wica = args.lambda_wica
+
     def loss_fn(self, **kwargs):
         x_recon = kwargs['x_recon']
         x_true = kwargs['x_true']
@@ -122,7 +125,7 @@ class AE(BaseDisentangler):
                 #     self.model.encoder.main[-1].weight[t:] = torch.zeros_like(self.model.encoder.main[-1].weight[t:])
 
                 x_recon, z_latent = self.model(x_true1)
-                w_loss = 100 * self.wica_loss(z_latent.data, latent_normalization=True).to(self.device)
+                w_loss = self.lambda_wica * self.wica_loss(z_latent.data, latent_normalization=True).to(self.device)
                 recon_loss = self.loss_fn(x_recon=x_recon, x_true=x_true1) + w_loss
                 loss_dict = {'recon': recon_loss, 'wica_loss': w_loss}
 

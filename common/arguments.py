@@ -150,6 +150,8 @@ def get_args(sys_args):
     # Other
     parser.add_argument('--seed', default=123, type=int, help='Seed value for torch, cuda, and numpy.')
 
+    parser.add_argument('--lambda_wica', default=1, type=int, help='Lambda used in wica approach.')
+
     args = parser.parse_args(sys_args)
 
     assert args.image_size == 64, 'for now, models are hard coded to support only image size of 64x64'
