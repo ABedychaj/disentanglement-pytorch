@@ -57,6 +57,7 @@ class AE(BaseDisentangler):
 
         # lambda
         self.lambda_wica = args.lambda_wica
+        self.number_of_gausses = args.number_of_gausses
 
     def loss_fn(self, **kwargs):
         x_recon = kwargs['x_recon']
@@ -68,13 +69,12 @@ class AE(BaseDisentangler):
 
     def random_choice_full(self, input, n_samples):
         from torch import multinomial, ones
-        number_of_gausses = 8
-        if n_samples * number_of_gausses < input.shape[0]:
+        if n_samples * self.number_of_gausses < input.shape[0]:
             replacement = False
         else:
             replacement = True
-        idx = multinomial(ones(input.shape[0]), n_samples * number_of_gausses, replacement=replacement)
-        sampled = input[idx].reshape(number_of_gausses, n_samples, -1)
+        idx = multinomial(ones(input.shape[0]), n_samples * self.number_of_gausses, replacement=replacement)
+        sampled = input[idx].reshape(self.number_of_gausses, n_samples, -1)
         return torch.mean(sampled, axis=1)
 
     def wica_loss(self, z, latent_normalization=False):
@@ -87,19 +87,18 @@ class AE(BaseDisentangler):
         dim = self.z_dim if self.z_dim is not None else x.shape[1]
         scale = (1 / dim)
         sampled_points = self.random_choice_full(x, dim)
-        number_of_gausses = 8
-        cov_mat = (scale * torch.eye(dim)).repeat(number_of_gausses, 1, 1)
+        cov_mat = (scale * torch.eye(dim)).repeat(self.number_of_gausses, 1, 1)
 
         mvn = MultivariateNormal(loc=sampled_points.to(self.device),
                                  covariance_matrix=cov_mat.to(self.device))
         weight_vector = torch.exp(mvn.log_prob(x.reshape(-1, 1, dim).to(self.device)))
 
         sum_of_weights = torch.sum(weight_vector, axis=0)
-        weight_sum = torch.sum(x * weight_vector.T.reshape(number_of_gausses, -1, 1), axis=1)
+        weight_sum = torch.sum(x * weight_vector.T.reshape(self.number_of_gausses, -1, 1), axis=1)
         weight_mean = weight_sum / sum_of_weights.reshape(-1, 1)
 
-        xm = x - weight_mean.reshape(number_of_gausses, 1, -1)
-        wxm = xm * weight_vector.T.reshape(number_of_gausses, -1, 1)
+        xm = x - weight_mean.reshape(self.number_of_gausses, 1, -1)
+        wxm = xm * weight_vector.T.reshape(self.number_of_gausses, -1, 1)
 
         wcov = (wxm.permute(0, 2, 1).matmul(xm)) / sum_of_weights.reshape(-1, 1, 1)
 
@@ -110,7 +109,7 @@ class AE(BaseDisentangler):
 
         triu = torch.triu(tmp, diagonal=1)
         normalize = 2.0 / (dim * (dim - 1))
-        cost = torch.sum(normalize * triu) / number_of_gausses
+        cost = torch.sum(normalize * triu) / self.number_of_gausses
         return cost
 
     def train(self):

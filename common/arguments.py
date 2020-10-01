@@ -151,6 +151,7 @@ def get_args(sys_args):
     parser.add_argument('--seed', default=123, type=int, help='Seed value for torch, cuda, and numpy.')
 
     parser.add_argument('--lambda_wica', default=1, type=int, help='Lambda used in wica approach.')
+    parser.add_argument('--number_of_gausses', default=8, type=int, help='Nummber of gausses used in WICA method.')
 
     args = parser.parse_args(sys_args)
 
