@@ -50,3 +50,4 @@ EVALUATION_METRICS = ('dci', 'factor_vae_metric', 'sap_score', 'mig', 'irs', 'be
 LR_SCHEDULERS = ('ReduceLROnPlateau', 'StepLR', 'MultiStepLR', 'ExponentialLR',
                  'CosineAnnealingLR', 'CyclicLR', 'LambdaLR')
 SCHEDULERS = ('LinearScheduler',)
+REPRESENTOR_MODE = ('mean', 'sample')

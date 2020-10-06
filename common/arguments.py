@@ -153,6 +153,8 @@ def get_args(sys_args):
     parser.add_argument('--lambda_wica', default=1, type=int, help='Lambda used in wica approach.')
     parser.add_argument('--number_of_gausses', default=8, type=int, help='Nummber of gausses used in WICA method.')
     parser.add_argument('--wica_loss', default=False, type=str2bool, help='Run with WICA loss.')
+    parser.add_argument('--representor_mode', default='mean', type=str, choices=c.REPRESENTOR_MODE,
+                        help='Mode for representor extractor.')
 
     args = parser.parse_args(sys_args)
 

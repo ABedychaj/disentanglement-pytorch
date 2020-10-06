@@ -1,15 +1,14 @@
-import os
-from tqdm import tqdm
 import logging
+import os
 
 import torch
 import torchvision.utils
+from tqdm import tqdm
 
-from common.utils import grid2gif, get_data_for_visualization, prepare_data_for_visualization, get_lr, is_time_for
-from common.data_loader import _get_dataloader_with_labels
 import common.constants as c
 from aicrowd.aicrowd_utils import is_on_aicrowd_server, evaluate_disentanglement_metric
 from common.utils import get_scheduler
+from common.utils import grid2gif, get_data_for_visualization, prepare_data_for_visualization, get_lr, is_time_for
 
 DEBUG = False
 
@@ -170,6 +169,8 @@ class BaseDisentangler(object):
         self.lambda_d_factor = args.lambda_d_factor
         self.lambda_d = self.lambda_d_factor * self.lambda_od
 
+        self.representor_mode = args.representor_mode
+
     def log_save(self, **kwargs):
         self.step()
 
@@ -199,7 +200,8 @@ class BaseDisentangler(object):
 
         # if any evaluation is included in args.evaluate_metric, evaluate every evaluate_iter
         if self.evaluation_metric and is_time_for(self.iter, self.evaluate_iter):
-            self.evaluate_results = evaluate_disentanglement_metric(self, metric_names=self.evaluation_metric)
+            self.evaluate_results = evaluate_disentanglement_metric(self, metric_names=self.evaluation_metric,
+                                                                    representor_mode=self.representor_mode)
 
         # log scalar values using wandb
         if is_time_for(self.iter, self.float_iter):

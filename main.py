@@ -43,7 +43,7 @@ def main(_args):
     if _args.aicrowd_challenge:
         from aicrowd import utils_pytorch as pyu, aicrowd_helpers
         # Export the representation extractor
-        path_to_saved = pyu.export_model(pyu.RepresentationExtractor(model.model.encoder, 'mean'),
+        path_to_saved = pyu.export_model(pyu.RepresentationExtractor(model.model.encoder, _args.representor_mode),
                                          input_shape=(1, model.num_channels, model.image_size, model.image_size))
         logging.info(f'A copy of the model saved in {path_to_saved}')
 
