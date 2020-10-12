@@ -187,7 +187,8 @@ class BaseDisentangler(object):
         if is_time_for(self.iter, self.ckpt_save_iter):
             self.save_checkpoint()
 
-        if is_time_for(self.iter, self.print_iter) or self.iter == 1:
+        # if is_time_for(self.iter, self.print_iter) or self.iter == 1:
+        if is_time_for(self.iter, self.print_iter):
             losses_map = dict()
             msg = '[{}:{}]  '.format(self.epoch, self.iter)
             for key, value in kwargs.get(c.LOSS, dict()).items():
@@ -208,7 +209,8 @@ class BaseDisentangler(object):
             self.visualize_traverse(limit=(self.traverse_min, self.traverse_max), spacing=self.traverse_spacing)
 
         # if any evaluation is included in args.evaluate_metric, evaluate every evaluate_iter
-        if (self.evaluation_metric and is_time_for(self.iter, self.evaluate_iter)) or self.iter == 1:
+        # if (self.evaluation_metric and is_time_for(self.iter, self.evaluate_iter)) or self.iter == 1:
+        if (self.evaluation_metric and is_time_for(self.iter, self.evaluate_iter)):
             self.evaluate_results = evaluate_disentanglement_metric(self, metric_names=self.evaluation_metric,
                                                                     representor_mode=self.representor_mode)
             metrics_map = dict()
