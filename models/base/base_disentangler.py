@@ -194,7 +194,7 @@ class BaseDisentangler(object):
             for key, value in kwargs.get(c.ACCURACY, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.ACCURACY, key, value)
             self.pbar.write(msg)
-            self.losses_df = self.losses_df.append(kwargs.get(c.LOSS, dict()))
+            self.losses_df = self.losses_df.append(pd.DataFrame(kwargs.get(c.LOSS, dict())))
             self.losses_df.to_csv(self.ckpt_dir + "losses.csv")
 
         # visualize the reconstruction of the current batch every recon_iter
