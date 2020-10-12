@@ -192,12 +192,12 @@ class BaseDisentangler(object):
             msg = '[{}:{}]  '.format(self.epoch, self.iter)
             for key, value in kwargs.get(c.LOSS, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.LOSS, key, value)
-                losses_map["{}_{}".format(c.LOSS, key)] = value.data
+                losses_map["{}_{}".format(c.LOSS, key)] = value.item()
             for key, value in kwargs.get(c.ACCURACY, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.ACCURACY, key, value)
             self.pbar.write(msg)
             print(losses_map)
-            self.losses_df = self.losses_df.append(pd.DataFrame(losses_map))
+            self.losses_df = self.losses_df.append(pd.DataFrame(losses_map), ignore_index=True)
             self.losses_df.to_csv(self.ckpt_dir + "losses.csv")
 
         # visualize the reconstruction of the current batch every recon_iter
