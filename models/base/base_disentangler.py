@@ -198,7 +198,7 @@ class BaseDisentangler(object):
             self.pbar.write(msg)
             print(losses_map)
             self.losses_df = self.losses_df.append(pd.DataFrame(losses_map, index=[0]), ignore_index=True)
-            self.losses_df.to_csv(self.ckpt_dir + "losses.csv")
+            self.losses_df.to_csv(self.ckpt_dir + "/losses.csv")
 
         # visualize the reconstruction of the current batch every recon_iter
         if is_time_for(self.iter, self.recon_iter):
@@ -212,8 +212,11 @@ class BaseDisentangler(object):
         if self.evaluation_metric and is_time_for(self.iter, self.evaluate_iter):
             self.evaluate_results = evaluate_disentanglement_metric(self, metric_names=self.evaluation_metric,
                                                                     representor_mode=self.representor_mode)
-            self.metrics_df = self.metrics_df.append(pd.DataFrame(self.evaluate_results))
-            self.metrics_df.to_csv(self.ckpt_dir + "metrics.csv")
+            metrics_map = dict()
+            for key, value in self.evaluate_results:
+                metrics_map[key] = value.item()
+            self.metrics_df = self.metrics_df.append(pd.DataFrame(metrics_map, index=[0]), ignore_index=True)
+            self.metrics_df.to_csv(self.ckpt_dir + "/metrics.csv")
 
         # log scalar values using wandb
         if is_time_for(self.iter, self.float_iter):
