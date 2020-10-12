@@ -196,7 +196,6 @@ class BaseDisentangler(object):
             for key, value in kwargs.get(c.ACCURACY, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.ACCURACY, key, value)
             self.pbar.write(msg)
-            print(losses_map)
             self.losses_df = self.losses_df.append(pd.DataFrame(losses_map, index=[0]), ignore_index=True)
             self.losses_df.to_csv(self.ckpt_dir + "/losses.csv")
 
