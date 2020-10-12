@@ -192,7 +192,7 @@ class BaseDisentangler(object):
             msg = '[{}:{}]  '.format(self.epoch, self.iter)
             for key, value in kwargs.get(c.LOSS, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.LOSS, key, value)
-                losses_map["{}_{}".format(c.LOSS, key)] = value.data[0]
+                losses_map["{}_{}".format(c.LOSS, key)] = value.data
             for key, value in kwargs.get(c.ACCURACY, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.ACCURACY, key, value)
             self.pbar.write(msg)
