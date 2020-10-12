@@ -1,1 +1,1 @@
-from .simple_discriminator import SimpleDiscriminator
+from .simple_discriminator import SimpleDiscriminator, SimpleDiscriminatorConv64

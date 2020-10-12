@@ -17,7 +17,7 @@ class SimpleDiscriminator(nn.Module):
             self.main.add_module(module=nn.LeakyReLU(0.2, True), name='lrelu' + str(i))
 
         self.main.add_module(module=nn.Linear(layer_size, num_classes), name='output')
-
+        print(self.main)
         init_layers(self._modules)
 
     def forward(self, x):
@@ -26,8 +26,8 @@ class SimpleDiscriminator(nn.Module):
 
 class SimpleDiscriminatorConv64(SimpleDiscriminator):
     # TODO: test
-    def __init__(self, num_channels=3, image_size=64, num_classes=2, num_fc_layers=7, fc_layer_size=1000):
-        super().__init__(256, num_classes=num_classes, num_layers=num_fc_layers, layer_size=fc_layer_size)
+    def __init__(self, num_channels=3, image_size=64, num_classes=2, num_layers=7, layer_size=1000):
+        super().__init__(256, num_classes=num_classes, num_layers=num_layers, layer_size=layer_size)
         assert image_size == 64, 'The SimpleDiscriminatorConv64 architecture is hardcoded for 64x64 images.'
 
         self.conv_encode = nn.Sequential(
@@ -43,7 +43,7 @@ class SimpleDiscriminatorConv64(SimpleDiscriminator):
             nn.ReLU(True),
             nn.Conv2d(256, 256, 4, 2, 1),
             nn.ReLU(True),
-            self.Flatten(),
+            nn.Flatten(),
         )
 
         init_layers(self._modules)
