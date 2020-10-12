@@ -1,6 +1,7 @@
 import logging
 import os
 
+import pandas as pd
 import torch
 import torchvision.utils
 from tqdm import tqdm
@@ -171,6 +172,10 @@ class BaseDisentangler(object):
 
         self.representor_mode = args.representor_mode
 
+        # losses and metrics args
+        self.losses_df = pd.DataFrame()
+        self.metrics_df = pd.DataFrame()
+
     def log_save(self, **kwargs):
         self.step()
 
@@ -189,6 +194,8 @@ class BaseDisentangler(object):
             for key, value in kwargs.get(c.ACCURACY, dict()).items():
                 msg += '{}_{}={:.3f}  '.format(c.ACCURACY, key, value)
             self.pbar.write(msg)
+            self.losses_df = self.losses_df.append(kwargs.get(c.LOSS, dict()))
+            self.losses_df.to_csv(self.ckpt_dir + "losses.csv")
 
         # visualize the reconstruction of the current batch every recon_iter
         if is_time_for(self.iter, self.recon_iter):
@@ -202,6 +209,8 @@ class BaseDisentangler(object):
         if self.evaluation_metric and is_time_for(self.iter, self.evaluate_iter):
             self.evaluate_results = evaluate_disentanglement_metric(self, metric_names=self.evaluation_metric,
                                                                     representor_mode=self.representor_mode)
+            self.metrics_df = self.metrics_df.append(pd.DataFrame(self.evaluate_results))
+            self.metrics_df.to_csv(self.ckpt_dir + "metrics.csv")
 
         # log scalar values using wandb
         if is_time_for(self.iter, self.float_iter):
