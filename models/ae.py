@@ -129,11 +129,12 @@ class AE(BaseDisentangler):
                 else:
                     w_loss = 1
 
-                recon_loss = self.recon_lambda * self.loss_fn(x_recon=x_recon, x_true=x_true1) + w_loss
+                recon_loss = self.recon_lambda * self.loss_fn(x_recon=x_recon, x_true=x_true1)
+                full_loss = recon_loss + w_loss
                 loss_dict = {'recon': recon_loss, 'wica_loss': w_loss}
 
                 self.optim_G.zero_grad()
-                recon_loss.backward(retain_graph=True)
+                full_loss.backward(retain_graph=True)
                 self.optim_G.step()
 
                 self.log_save(loss=loss_dict,
