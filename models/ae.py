@@ -1,5 +1,3 @@
-import random
-
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
@@ -59,6 +57,7 @@ class AE(BaseDisentangler):
         self.lambda_wica = args.lambda_wica
         self.number_of_gausses = args.number_of_gausses
         self.wica = args.wica_loss
+        self.recon_lambda = args.recon_lambda
 
     def loss_fn(self, **kwargs):
         x_recon = kwargs['x_recon']
@@ -130,7 +129,7 @@ class AE(BaseDisentangler):
                 else:
                     w_loss = 1
 
-                recon_loss = self.loss_fn(x_recon=x_recon, x_true=x_true1) * w_loss
+                recon_loss = self.recon_lamda * self.loss_fn(x_recon=x_recon, x_true=x_true1) + w_loss
                 loss_dict = {'recon': recon_loss, 'wica_loss': w_loss}
 
                 self.optim_G.zero_grad()
