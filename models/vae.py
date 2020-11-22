@@ -173,7 +173,7 @@ class VAE(BaseDisentangler):
         if self.wica:
             output_losses['wica'] = self.lambda_wica * self.wica_loss(mu.data, latent_normalization=True).to(
                 self.device)
-            output_losses[c.TOTAL_VAE] += output_losses['wica']
+            # output_losses[c.TOTAL_VAE] += output_losses['wica']
 
         if c.FACTORVAE in self.loss_terms:
             from models.factorvae import factorvae_loss_fn
