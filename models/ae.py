@@ -115,7 +115,12 @@ class AE(BaseDisentangler):
     def train(self):
         while not self.training_complete():
             self.net_mode(train=True)
+            freeze_first_batch = True
             for x_true1, _ in self.data_loader:
+                if freeze_first_batch is True:
+                    freeze_first_batch = False
+                    first_batch = x_true1.to(self.device)
+
                 x_true1 = x_true1.to(self.device)
 
                 # dummy nested dropout
@@ -125,6 +130,7 @@ class AE(BaseDisentangler):
 
                 x_recon, z_latent = self.model(x_true1)
                 if self.wica:
+                    _, z_latent = self.model(first_batch)
                     w_loss = self.lambda_wica * self.wica_loss(z_latent.data, latent_normalization=True).to(self.device)
                 else:
                     w_loss = 1
