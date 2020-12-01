@@ -159,6 +159,7 @@ class VAE(BaseDisentangler):
         x_true = kwargs['x_true']
         mu = kwargs['mu']
         logvar = kwargs['logvar']
+        mu_fixed = kwargs['mu_fixed']
 
         bs = self.batch_size
         output_losses = dict()
@@ -171,7 +172,7 @@ class VAE(BaseDisentangler):
         output_losses[c.TOTAL_VAE] += output_losses['kld']
 
         if self.wica:
-            output_losses['wica'] = self.lambda_wica * self.wica_loss(mu.data, latent_normalization=True).to(
+            output_losses['wica'] = self.lambda_wica * self.wica_loss(mu_fixed.data, latent_normalization=True).to(
                 self.device)
             # output_losses[c.TOTAL_VAE] += output_losses['wica']
 
@@ -203,12 +204,17 @@ class VAE(BaseDisentangler):
 
         return output_losses
 
-    def vae_base(self, losses, x_true1, x_true2, label1, label2):
+    def vae_base(self, losses, x_true1, x_true2, label1, label2, first_batch, first_batch_label):
         mu, logvar = self.model.encode(x=x_true1, c=label1)
         z = reparametrize(mu, logvar)
         x_recon = self.model.decode(z=z, c=label1)
+
+        mu_fixed, logvar_fixed = self.model.encode(x=first_batch, c=first_batch_label)
+        z_fixed = reparametrize(mu, logvar_fixed)
+
         loss_fn_args = dict(x_recon=x_recon, x_true=x_true1, mu=mu, logvar=logvar, z=z,
-                            x_true2=x_true2, label2=label2)
+                            x_true2=x_true2, label2=label2, mu_fixed=mu_fixed, logvar_fixed=logvar_fixed,
+                            z_fixed=z_fixed)
 
         losses.update(self.loss_fn(losses, **loss_fn_args))
         return losses, {'x_recon': x_recon, 'mu': mu, 'z': z, 'logvar': logvar}
@@ -218,6 +224,7 @@ class VAE(BaseDisentangler):
         while not self.training_complete():
             self.net_mode(train=True)
             vae_loss_sum = 0
+            freeze_first_batch = True
             for internal_iter, (x_true1, label1) in enumerate(self.data_loader):
                 losses = dict()
                 x_true1 = x_true1.to(self.device)
@@ -226,7 +233,12 @@ class VAE(BaseDisentangler):
                 x_true2 = x_true2.to(self.device)
                 label2 = label2.to(self.device)
 
-                losses, params = self.vae_base(losses, x_true1, x_true2, label1, label2)
+                if freeze_first_batch is True:
+                    freeze_first_batch = False
+                    first_batch = x_true1.to(self.device)
+                    first_batch_label = label1.to(self.device)
+
+                losses, params = self.vae_base(losses, x_true1, x_true2, label1, label2, first_batch, first_batch_label)
 
                 self.optim_G.zero_grad()
                 losses[c.TOTAL_VAE].backward(retain_graph=False)
