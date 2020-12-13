@@ -73,8 +73,6 @@ class WICA(object):
             device=self.device
         )
 
-        print(weight_vector.shape)
-
         sum_of_weights = torch.sum(weight_vector, axis=0)
         weight_sum = torch.sum(x * weight_vector.T.reshape(self.number_of_gausses, -1, 1), axis=1)
         weight_mean = weight_sum / sum_of_weights.reshape(-1, 1)

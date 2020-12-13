@@ -6,6 +6,7 @@ from torch import nn
 from architectures import encoders, decoders
 from common import constants as c
 from common.ops import kl_divergence_mu0_var1, reparametrize
+from common.wica_loss import WICA
 from models.base.base_disentangler import BaseDisentangler
 
 
@@ -80,8 +81,8 @@ class VAE(BaseDisentangler):
 
         # WICA
         self.lambda_wica = args.lambda_wica
-        self.number_of_gausses = args.number_of_gausses
         self.wica = args.wica_loss
+        self.loss = WICA(args.z_dim, args.number_of_gausses)
 
     def encode_deterministic(self, **kwargs):
         images = kwargs['images']
@@ -109,51 +110,6 @@ class VAE(BaseDisentangler):
             kld_loss = (kl_divergence_mu0_var1(mu, logvar) - capacity).abs() * self.w_kld
         return kld_loss
 
-    def random_choice_full(self, input, n_samples):
-        from torch import multinomial, ones
-        if n_samples * self.number_of_gausses < input.shape[0]:
-            replacement = False
-        else:
-            replacement = True
-        idx = multinomial(ones(input.shape[0]), n_samples * self.number_of_gausses, replacement=replacement)
-        sampled = input[idx].reshape(self.number_of_gausses, n_samples, -1)
-        return torch.mean(sampled, axis=1)
-
-    def wica_loss(self, z, latent_normalization=False):
-        from torch.distributions import MultivariateNormal
-
-        if latent_normalization:
-            x = (z - z.mean(dim=1, keepdim=True)) / z.std(dim=1, keepdim=True)
-        else:
-            x = z
-        dim = self.z_dim if self.z_dim is not None else x.shape[1]
-        scale = (1 / dim)
-        sampled_points = self.random_choice_full(x, dim)
-        cov_mat = (scale * torch.eye(dim)).repeat(self.number_of_gausses, 1, 1)
-
-        mvn = MultivariateNormal(loc=sampled_points.to(self.device),
-                                 covariance_matrix=cov_mat.to(self.device))
-        weight_vector = torch.exp(mvn.log_prob(x.reshape(-1, 1, dim).to(self.device)))
-
-        sum_of_weights = torch.sum(weight_vector, axis=0)
-        weight_sum = torch.sum(x * weight_vector.T.reshape(self.number_of_gausses, -1, 1), axis=1)
-        weight_mean = weight_sum / sum_of_weights.reshape(-1, 1)
-
-        xm = x - weight_mean.reshape(self.number_of_gausses, 1, -1)
-        wxm = xm * weight_vector.T.reshape(self.number_of_gausses, -1, 1)
-
-        wcov = (wxm.permute(0, 2, 1).matmul(xm)) / sum_of_weights.reshape(-1, 1, 1)
-
-        diag = torch.diagonal(wcov ** 2, dim1=1, dim2=2)
-        diag_pow_plus = diag.reshape(diag.shape[0], diag.shape[1], -1) + diag.reshape(diag.shape[0], -1, diag.shape[1])
-
-        tmp = (2 * wcov ** 2 / diag_pow_plus)
-
-        triu = torch.triu(tmp, diagonal=1)
-        normalize = 2.0 / (dim * (dim - 1))
-        cost = torch.sum(normalize * triu) / self.number_of_gausses
-        return cost
-
     def loss_fn(self, input_losses, **kwargs):
         x_recon = kwargs['x_recon']
         x_true = kwargs['x_true']
@@ -172,8 +128,104 @@ class VAE(BaseDisentangler):
         output_losses[c.TOTAL_VAE] += output_losses['kld']
 
         if self.wica:
-            output_losses['wica'] = self.lambda_wica * self.wica_loss(mu_fixed.data, latent_normalization=True).to(
+            # only first batch
+            output_losses['wica_on_first_batch_gauss'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                                latent_normalization=True,
+                                                                                                how="gauss"
+                                                                                                ).to(
                 self.device)
+
+            # 1/sqrt(1+x^2)
+            output_losses['wica_on_first_batch_sqrt'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                               latent_normalization=True,
+                                                                                               how="sqrt"
+                                                                                               ).to(
+                self.device)
+
+            # log(1+x^2)
+            output_losses['wica_on_first_batch_log'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                              latent_normalization=True,
+                                                                                              how="log"
+                                                                                              ).to(
+                self.device)
+
+            # TStudent
+            output_losses['wica_on_first_batch_TStudent'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                                   latent_normalization=True,
+                                                                                                   how="TStudent"
+                                                                                                   ).to(
+                self.device)
+
+            # Cauchy
+            output_losses['wica_on_first_batch_Cauchy'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                                 latent_normalization=True,
+                                                                                                 how="Cauchy"
+                                                                                                 ).to(
+                self.device)
+
+            # Gumbel
+            output_losses['wica_on_first_batch_Gumbel'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                                 latent_normalization=True,
+                                                                                                 how="Gumbel"
+                                                                                                 ).to(
+                self.device)
+
+            # Laplace
+            output_losses['wica_on_first_batch_Laplace'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+                                                                                                  latent_normalization=True,
+                                                                                                  how="Laplace"
+                                                                                                  ).to(
+                self.device)
+
+            # on every batch
+            output_losses['wica_on_each_batch_batch'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                               latent_normalization=True,
+                                                                                               how="gauss"
+                                                                                               ).to(
+                self.device)
+
+            # 1/sqrt(1+x^2)
+            output_losses['wica_on_each_batch_sqrt'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                              latent_normalization=True,
+                                                                                              how="sqrt"
+                                                                                              ).to(
+                self.device)
+
+            # log(1+x^2)
+            output_losses['wica_on_each_batch_log'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                             latent_normalization=True,
+                                                                                             how="log"
+                                                                                             ).to(
+                self.device)
+
+            # TStudent
+            output_losses['wica_on_each_batch_TStudent'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                                  latent_normalization=True,
+                                                                                                  how="TStudent"
+                                                                                                  ).to(
+                self.device)
+
+            # Cauchy
+            output_losses['wica_on_each_batch_Cauchy'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                                latent_normalization=True,
+                                                                                                how="Cauchy"
+                                                                                                ).to(
+                self.device)
+
+            # Gumbel
+            output_losses['wica_on_each_batch_Gumbel'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                                latent_normalization=True,
+                                                                                                how="Gumbel"
+                                                                                                ).to(
+                self.device)
+
+            # Laplace
+            output_losses['wica_on_each_batch_Laplace'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+                                                                                                 latent_normalization=True,
+                                                                                                 how="Laplace"
+                                                                                                 ).to(
+                self.device)
+
             # output_losses[c.TOTAL_VAE] += output_losses['wica']
 
         if c.FACTORVAE in self.loss_terms:

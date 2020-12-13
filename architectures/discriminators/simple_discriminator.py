@@ -17,7 +17,6 @@ class SimpleDiscriminator(nn.Module):
             self.main.add_module(module=nn.LeakyReLU(0.2, True), name='lrelu' + str(i))
 
         self.main.add_module(module=nn.Linear(layer_size, num_classes), name='output')
-        print(self.main)
         init_layers(self._modules)
 
     def forward(self, x):
