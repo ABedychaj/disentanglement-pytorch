@@ -23,7 +23,10 @@ class AEModel(nn.Module):
 
     def forward(self, x):
         z = self.encode(x)
-        return self.decode(z), z
+        means = z.mean(dim=1, keepdim=True)
+        stds = z.std(dim=1, keepdim=True)
+        normalized_data = (z - means) / stds
+        return self.decode(normalized_data), normalized_data
 
 
 class AE(BaseDisentangler):
