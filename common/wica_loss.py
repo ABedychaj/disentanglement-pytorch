@@ -73,7 +73,7 @@ class WICA(object):
             x = z
         dim = self.z_dim if self.z_dim is not None else x.shape[1]
 
-        _, weight_vector = provide_weights_for_x(
+        weight_vector = provide_weights_for_x(
             x=x,
             how=how,
             device=self.device
