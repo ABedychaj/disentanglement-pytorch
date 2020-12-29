@@ -87,7 +87,9 @@ class AE(BaseDisentangler):
                 x_recon, z_latent = self.model(x_true1)
                 if self.wica:
                     _, z_latent = self.model(first_batch)
-                    w_loss = self.lambda_wica *  self.loss.wica_loss(z_latent.data, latent_normalization=True).to(self.device)
+                    w_loss = self.lambda_wica * self.loss.wica_loss(z_latent.data,
+                                                                    latent_normalization=True,
+                                                                    how="sqrt").to(self.device)
                 else:
                     w_loss = 1
 
