@@ -215,7 +215,7 @@ class BaseDisentangler(object):
                                                                     representor_mode=self.representor_mode)
             metrics_map = dict()
             for key, value in self.evaluate_results.items():
-                metrics_map[key] = value.item()
+                metrics_map[key] = value
             self.metrics_df = self.metrics_df.append(pd.DataFrame(metrics_map, index=[0]), ignore_index=True)
             self.metrics_df.to_csv(self.ckpt_dir + "/metrics.csv")
 
