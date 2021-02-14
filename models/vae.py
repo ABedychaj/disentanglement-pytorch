@@ -136,18 +136,18 @@ class VAE(BaseDisentangler):
             #     self.device)
 
             # 1/sqrt(1+x^2)
-            output_losses['wica_on_first_batch_sqrt'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
-                                                                                               latent_normalization=True,
-                                                                                               how="sqrt"
-                                                                                               ).to(
-                self.device)
-
-            output_losses['wica_on_first_batch_sqrt_mean_true'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
-                                                                                                         latent_normalization=True,
-                                                                                                         how="sqrt",
-                                                                                                         mean=True
-                                                                                                         ).to(
-                self.device)
+            # output_losses['wica_on_first_batch_sqrt'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+            #                                                                                    latent_normalization=True,
+            #                                                                                    how="sqrt"
+            #                                                                                    ).to(
+            #     self.device)
+            #
+            # output_losses['wica_on_first_batch_sqrt_mean_true'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
+            #                                                                                              latent_normalization=True,
+            #                                                                                              how="sqrt",
+            #                                                                                              mean=True
+            #                                                                                              ).to(
+            #     self.device)
 
             # log(1+x^2)
             # output_losses['wica_on_first_batch_log'] = self.lambda_wica * self.loss.wica_loss(mu_fixed.data,
@@ -192,11 +192,11 @@ class VAE(BaseDisentangler):
             #     self.device)
 
             # 1/sqrt(1+x^2)
-            output_losses['wica_on_each_batch_sqrt'] = self.lambda_wica * self.loss.wica_loss(mu.data,
-                                                                                              latent_normalization=True,
-                                                                                              how="sqrt"
-                                                                                              ).to(
-                self.device)
+            # output_losses['wica_on_each_batch_sqrt'] = self.lambda_wica * self.loss.wica_loss(mu.data,
+            #                                                                                   latent_normalization=True,
+            #                                                                                   how="sqrt"
+            #                                                                                   ).to(
+            #     self.device)
 
             output_losses['wica_on_each_batch_sqrt_mean_true'] = self.lambda_wica * self.loss.wica_loss(mu.data,
                                                                                                         latent_normalization=True,
@@ -240,13 +240,13 @@ class VAE(BaseDisentangler):
             #                                                                                      ).to(
             #     self.device)
 
-            # output_losses[c.TOTAL_VAE] += output_losses['wica']
+            output_losses[c.TOTAL_VAE] += output_losses['wica_on_each_batch_sqrt_mean_true']
 
         if c.FACTORVAE in self.loss_terms:
             from models.factorvae import factorvae_loss_fn
             output_losses['vae_tc_factor'], output_losses['discriminator_tc'] = factorvae_loss_fn(
                 self.w_tc, self.model, self.PermD, self.optim_PermD, self.ones, self.zeros, **kwargs)
-            output_losses[c.TOTAL_VAE] += output_losses['vae_tc_factor']
+            # output_losses[c.TOTAL_VAE] += output_losses['vae_tc_factor']
 
         if c.DIPVAEI in self.loss_terms:
             from models.dipvae import dipvaei_loss_fn
