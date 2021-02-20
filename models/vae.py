@@ -122,10 +122,10 @@ class VAE(BaseDisentangler):
         output_losses[c.TOTAL_VAE] = input_losses.get(c.TOTAL_VAE, 0)
 
         output_losses[c.RECON] = F.binary_cross_entropy(x_recon, x_true, reduction='sum') / bs * self.w_recon
-        output_losses[c.TOTAL_VAE] += output_losses[c.RECON]
+        output_losses[c.TOTAL_VAE] += 0 * output_losses[c.RECON]
 
         output_losses['kld'] = self._kld_loss_fn(mu, logvar)
-        output_losses[c.TOTAL_VAE] += output_losses['kld']
+        output_losses[c.TOTAL_VAE] += 0 * output_losses['kld']
 
         if self.wica:
             # only first batch
